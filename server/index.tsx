@@ -5,6 +5,11 @@ import {resolve} from 'path';
 import Koa from 'koa';
 import App from '../app';
 
+interface Entry {
+  path: string,
+  integrity: string
+}
+
 const app = new Koa();
 
 const {css, js} = readJSONSync(resolve(__dirname, '../build/client/assets.json')).entrypoints.main;
@@ -29,14 +34,14 @@ app.use((ctx) => {
 const listener = app.listen(8082, 'localhost');
 export default listener;
 
-function cssImports(css: string[]) {
+function cssImports(css: Entry[]) {
   return css
-    .map((cssPath) => `<link href="${cssPath}" rel="stylesheet" type="text/css" />`)
+    .map((cssPath) => `<link href="${cssPath.path}" rel="stylesheet" type="text/css" />`)
     .join('\n');
 }
 
-function javascriptImports(javascript: string[]) {
+function javascriptImports(javascript: Entry[]) {
   return javascript
-    .map((scriptPath) => `<script type="text/javascript" src="${scriptPath}" defer></script>`)
+    .map((scriptPath) => `<script type="text/javascript" src="${scriptPath.path}" defer></script>`)
     .join('\n');
 }
